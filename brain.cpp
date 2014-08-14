@@ -5,46 +5,36 @@ void turn_matrix(int *,int );
 
 int main(){
 
-	int i;
-	int m2_size=2;
-	int m3_size=3;
-	int m2[]={	1,2,
-						 	3,4	};
-	int m3[9],m4[16];
-
-	for (i=0;i<16;i++)
-		m4[i]=i;
+	int i,size=4,m[size*size];
+    for (i=0;i<size*size;i++)
+		m[i]=i;
 
 	//draw_matrix(m2,2);
-	
-	draw_matrix(m4,4);
-	turn_matrix(m4,4);
-	draw_matrix(m4,4);
+
+	draw_matrix(m,size);
+	turn_matrix(m,size);
+	cout<<endl;
+	draw_matrix(m,size);
 	return 0;
 }
-//чтобы сделать рекурсию нужно передавать матрицу в функцию, прибавляя к указателю n+1
+
 void turn_matrix(int *matrix,int n){
 
-	int i=0,j=0,k,tmp,fel;
-	
-		fel=i*n+j;
-		for (k=1;k<=4;k++){
-
-			i=j;j=n-1-i;
-			tmp=matrix[j+i*n];
-			matrix[j+i*n]=matrix[fel];
-			matrix[fel]=tmp;
-			
-		}
-
+	int i=0,j=0,k,tmp,on=n;
+    //matrix=matrix+n+1;n=n-2;//для теста
+    for(;n>1;i=0,j=0){
+        for(;j<n-1;j++){
+            tmp=matrix[j*(on)+n-1-i];
+            matrix[j*(on)+n-1-i]=matrix[i*(on)+j];
+            matrix[i*(on)+j]=matrix[(n-1-j)*(on)+i];
+            matrix[(n-1-j)*(on)+i]=matrix[(n-1-i)*(on)+n-1-j];
+            matrix[(n-1-i)*(on)+n-1-j]=tmp;
+        }
 
 
-
-
-	
-
-	
-	
+    cout<<n<<endl;
+    matrix=matrix+on+1;n=n-2;
+    }
 
 }
 
