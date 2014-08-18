@@ -78,7 +78,7 @@ void merge(int *main,int main_size, int *shape,int shape_size,int x,int y){
 	bool collision,bottom;
 	int showme[200];
 
-	//
+	//–û—Å—Ç–∞–≤–ª—è–µ–º
 
 	/*for (i=0,collision=bottom=false;i<shape_size;i++){
 		for(j=0;j<shape_size;j++){
@@ -88,6 +88,7 @@ void merge(int *main,int main_size, int *shape,int shape_size,int x,int y){
                 bottom=true;
 		}
 	}
+	//–û—Å—Ç–∞–≤–ª—è–µ–º
 	if (bottom==true && collision==false){
       for (i=0;i<shape_size;i++)
         for(j=0;j<shape_size;j++)
@@ -96,7 +97,8 @@ void merge(int *main,int main_size, int *shape,int shape_size,int x,int y){
   
 
     cout<<"collision: "<<collision<<" bottom: "<<bottom<<endl;*/
-	
+	//–í —Ñ—É–Ω–∫—Ü–∏—é –¥–æ–±–∞–≤–∏—Ç—å –æ–ø—Ä–µ–¥–µ–ª–µ–Ω–∏–µ –ª–∏–Ω–∏–∏
+	//–í—ã–Ω–æ—Å–∏–º –∏–∑ —Ñ—É–Ω–∫—Ü–∏–∏ –≤—Å–µ, —á—Ç–æ –Ω–∏–∂–µ
   for(i=0;i<20;i++){
   	for(j=0;j<10;j++){
   		showme[i*10+j]=main[i*16+j+3];
@@ -117,26 +119,26 @@ void merge(int *main,int main_size, int *shape,int shape_size,int x,int y){
 	}
 
 }
-//‘ÛÌÍˆËˇ ÔÓ‚ÓÓÚ‡ Ï‡ÚËˆ˚ (‚Ô‡‚Ó)
-//¬ıÓ‰: Ï‡ÚËˆ‡, ‡ÁÏÂ
+//√î√≥√≠√™√∂√®√ø √Ø√Æ√¢√Æ√∞√Æ√≤√† √¨√†√≤√∞√®√∂√ª (√¢√Ø√∞√†√¢√Æ)
+//√Ç√µ√Æ√§: √¨√†√≤√∞√®√∂√†, √∞√†√ß√¨√•√∞
 void turn_matrix(int *matrix,int n){
   int i=0,j=0,k,tmp,on=n;
 
   for(;n>1;i=0,j=0){
-    for(;j<n-1;j++){            //ˆËÍÎ ÔÓıÓ‰‡ ÔÓ ˝ÎÂÏÂÌÚ‡Ï ‚ÂıÌÂÈ ÒÚÓÍË Ï‡ÚËˆ˚
-                                    //‚Á‡ËÏÓÓ·ÏÂÌ ÁÌ‡˜ÂÌËˇÏË 4-ı ˝ÎÂÏÂÌÚÓ‚
-                                    //Ì‡˜ËÌ‡ˇ Ò [0,j]
+    for(;j<n-1;j++){            //√∂√®√™√´ √Ø√∞√Æ√µ√Æ√§√† √Ø√Æ √Ω√´√•√¨√•√≠√≤√†√¨ √¢√•√∞√µ√≠√•√© √±√≤√∞√Æ√™√® √¨√†√≤√∞√®√∂√ª
+                                    //√¢√ß√†√®√¨√Æ√Æ√°√¨√•√≠ √ß√≠√†√∑√•√≠√®√ø√¨√® 4-√µ √Ω√´√•√¨√•√≠√≤√Æ√¢
+                                    //√≠√†√∑√®√≠√†√ø √± [0,j]
       tmp=matrix[j*(on)+n-1-i];
       matrix[j*(on)+n-1-i]=matrix[i*(on)+j];
       matrix[i*(on)+j]=matrix[(n-1-j)*(on)+i];
       matrix[(n-1-j)*(on)+i]=matrix[(n-1-i)*(on)+n-1-j];
       matrix[(n-1-i)*(on)+n-1-j]=tmp;
     }
-  matrix=matrix+on+1;n=n-2;//ÔÂÂıÓ‰ Í ·ÓÎÂÂ ÏÂÌ¸¯ÂÈ ÔÓ‰Ï‡ÚËˆÂ ‡ÁÏÂ‡ N-2
+  matrix=matrix+on+1;n=n-2;//√Ø√•√∞√•√µ√Æ√§ √™ √°√Æ√´√•√• √¨√•√≠√º√∏√•√© √Ø√Æ√§√¨√†√≤√∞√®√∂√• √∞√†√ß√¨√•√∞√† N-2
   }
 }
-//‘ÛÌÍˆËˇ ‚˚‚Ó‰‡ ÒÓ‰ÂÊËÏÓ„Ó Ï‡ÚËˆ˚ ‚ ÍÓÌÒÓÎ¸
-//¬ıÓ‰: Ï‡ÚËˆ‡, ‡ÁÏÂ
+//√î√≥√≠√™√∂√®√ø √¢√ª√¢√Æ√§√† √±√Æ√§√•√∞√¶√®√¨√Æ√£√Æ √¨√†√≤√∞√®√∂√ª √¢ √™√Æ√≠√±√Æ√´√º
+//√Ç√µ√Æ√§: √¨√†√≤√∞√®√∂√†, √∞√†√ß√¨√•√∞
 void draw_matrix(int matrix[],int size){
 	int i,j;
 	for(i=0;i<size;i++){
