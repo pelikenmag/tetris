@@ -1,8 +1,17 @@
 #include <iostream>
 using namespace std;
+
+const int IS_BORDER=1;
+const int IS_BOTTOM=2;
+const int IS_SMTH=4;
+
 void draw_matrix(int *,int);
 void turn_matrix(int *,int );
 void merge(int *,int,int *,int,int,int);
+int testme(){
+	int xxx=IS_BORDER|IS_SMTH|IS_BOTTOM;
+	return xxx;
+}
 
 
 int main(){
@@ -33,10 +42,8 @@ int main(){
 	int shape1[2*2]={	0,1,
 										1,1};
 
-  int
-
-  x=5;y=0;
-/*
+	x=5;y=0;
+	/*
   while (arrow!='z'){
     cout<<"Enter the direction:"<<endl;
     cin>>arrow;
@@ -52,22 +59,28 @@ int main(){
     case 's':
       y++;
       break;
+     case 'w':
+     	turn_matrix(shape1,2);
+     	break;
     default:;
 
     }
     merge(main,0,shape1,2,x,y);
   }
-*/
+  //merge(main,0,shape1,2,x,y);
+	*/
+
+  cout<<"::: "<<testme()<<endl;
 	return 0;
 }
 void merge(int *main,int main_size, int *shape,int shape_size,int x,int y){
 	int i=0,j=0;
 	bool collision,bottom;
+	int showme[200];
 
+	//
 
-	//turn_matrix(shape,shape_size);
-
-	for (i=0,collision=bottom=false;i<shape_size;i++){
+	/*for (i=0,collision=bottom=false;i<shape_size;i++){
 		for(j=0;j<shape_size;j++){
 			if (main[x+(i+y)*16+j]>0 && shape[i*shape_size+j]>0)
                 collision=true;
@@ -80,15 +93,28 @@ void merge(int *main,int main_size, int *shape,int shape_size,int x,int y){
         for(j=0;j<shape_size;j++)
           main[x+(i+y)*16+j]=shape[i*shape_size+j];
 	}
+  
+
+    cout<<"collision: "<<collision<<" bottom: "<<bottom<<endl;*/
+	
+  for(i=0;i<20;i++){
+  	for(j=0;j<10;j++){
+  		showme[i*10+j]=main[i*16+j+3];
+  	}
+  }
+  for (i=0;i<shape_size;i++){
+        for(j=0;j<shape_size;j++){
+          showme[(x-3)+(i+y)*10+j]=shape[i*shape_size+j];
+        }
+	}
+
   cout<<"-----------------------------"<<endl;
-	for(i=0;i<21;i++){
-		for(j=0;j<16;j++){
-			cout<<main[i*16+j]<<"|";
+	for(i=0;i<20;i++){
+		for(j=0;j<10;j++){
+			cout<<showme[i*10+j]<<"|";
 		}
 		cout<<endl;
 	}
-    cout<<"collision: "<<collision<<" bottom: "<<bottom<<endl;
-
 
 }
 //Функция поворота матрицы (вправо)
