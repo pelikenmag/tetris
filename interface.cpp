@@ -2,15 +2,30 @@
 #include <time.h>
 using namespace std;
 
-//Variables for Field::Merge()
-const int FIELD_BOTTOM=1;
-const int FIELD_BORDER=2;
-//Variables for Field::Show()
-const int FIELD_AS_TEXT=0;
-const int FIELD_AS_2D=1;
-//Variables for Shape::Generate()
-const int SHAPE_ANGLE=0;
-const int SHAPE_STICK=1;
+//Structure for Merge and other functions
+struct st_MERGEME{
+  int *shape;
+  int sn,sm;
+  int x,y;
+};
+//Constants
+  //Sizes and defaults
+  const int FIELD_SIZE_N=20;
+  const int FIELD_SIZE_M=10;
+  const int DEFAULT_X=4;
+  const int DEFAULT_Y=0;
+  //Variables for Field::Merge()
+  const int FIELD_OK=0;
+  const int FIELD_BOTTOM=1;
+  const int FIELD_BORDER=2;
+  //Variables for Field::Show()
+  const int FIELD_AS_TEXT=0;
+  const int FIELD_AS_2D=1;
+  const int SHOWME_AS_TEXT=2;
+  const int SHOWME_AS_2D=3;
+  //Variables for Shape::Generate()
+  const int SHAPE_ANGLE=0;
+  const int SHAPE_STICK=1;
 
 //Game main matrix class
 class Field{
@@ -18,12 +33,16 @@ class Field{
   private:
     int *_field;
     int fn,fm;
+    int *showme;
+    int _n,_m;
+
 
 
   public:
     void Init(int, int);
-    int Merge(int*,int,int,int,int);
+    int Merge(struct st_MERGEME);
     void Show(int);
+    void CreateShowField(struct st_MERGEME);
 };
 
 //Shapes class
@@ -43,7 +62,7 @@ class Shape{
     int stick_n,stick_m;
     int *stick;
 
- 
+
   void ShowShapePointer(){
     int i,j;
     if (!shapepointer){
@@ -71,49 +90,98 @@ class Shape{
 //-----------------------------------
 int main(){
 
-  int t=clock();
-  Field main;Shape myshape;
-  main.Init(20,10);
-  
+  //int t=clock();
+  Field main;
+  Shape myshape;
+  st_MERGEME mergeme;
+
+  main.Init(FIELD_SIZE_N,FIELD_SIZE_M);
+  int i,j,x=DEFAULT_X,y=DEFAULT_Y,mergeresult,protox=x;
+  char arrow;
+
   myshape.Generate(SHAPE_STICK);
   cout<<endl;
-  myshape.Rotate();
-  
-  int mergeres=main.Merge(myshape.GetShape(),myshape.GetShapeN(),myshape.GetShapeM(),4,2);
-  cout<<mergeres<<endl;
-  main.Show(FIELD_AS_TEXT);
+  while (arrow!='z'){
 
+    while (1){
+      mergeme.shape=myshape.GetShape();mergeme.sn=myshape.GetShapeN();mergeme.sm=myshape.GetShapeM();
+      mergeme.x=x;mergeme.y=y;
+      mergeresult=main.Merge(mergeme);
+      cout<<"Mergeresult= "<<mergeresult<<endl;
+
+      if (mergeresult==FIELD_OK)
+        break;
+      if (mergeresult==FIELD_BORDER && mergeresult==FIELD_BORDER|FIELD_BOTTOM){
+        cout<<"Border!"<<endl;
+        x=protox;
+      }
+      if (mergeresult==FIELD_BOTTOM){
+        cout<<"Bottom!"<<endl;
+        myshape.Generate(SHAPE_ANGLE);
+        x=DEFAULT_X;y=DEFAULT_Y;
+      }
+
+    }
+    main.CreateShowField(mergeme);
+    main.Show(SHOWME_AS_TEXT);
+
+    cout<<"Enter the direction:"<<endl;
+    cin>>arrow;
+    protox=x;
+
+    switch(arrow){
+    case 'a':x--;break;
+    case 'd':x++;break;
+    case 's':y++;break;
+    case 'w':myshape.Rotate();
+    default:;
+    }
+
+  }
 
   return 0;
 }
-/*
-Functions
-*/
-//
+
+//*Functions
+void Field::CreateShowField(struct st_MERGEME st){
+
+  int i,j;
+
+  for (i=0;i<_n;i++){
+    for (j=0;j<_m;j++){
+      showme[i*_m+j]=_field[i*fm+j+3];
+    }
+  }
+      for (i=0;i<st.sn;i++)
+        for(j=0;j<st.sm;j++)
+          showme[st.x+j+(i+st.y)*_m]+=st.shape[i*st.sm+j];
+
+}
+
 //TODO- delete unused memory
-int Field::Merge(int *shape, int sn,int sm,int x,int y){
+int Field::Merge(struct st_MERGEME st){
   int result=0,i,j;
-  
-  x+=3;//converting to _field size, jumping through the first three "1" symbols
-  for (i=0;i<sn;i++){
-    for(j=0;j<sm;j++){
-      if (_field[x+j+(i+y)*fm]>0 && shape[i*sm+j]>0)
+
+  st.x+=3;//converting to _field size, jumping through the first three "1" symbols
+  for (i=0;i<st.sn;i++){
+    for(j=0;j<st.sm;j++){
+      if (_field[st.x+j+(i+st.y)*fm]>0 && st.shape[i*st.sm+j]>0)
                 return result|=FIELD_BORDER;
-      if (_field[x+(y+i+1)*fm+j]>0 && shape[i*sm+j]>0)
+      if (_field[st.x+(st.y+i+1)*fm+j]>0 && st.shape[i*st.sm+j]>0)
                 result|=FIELD_BOTTOM;
     }
   }
-  if (result!=FIELD_BOTTOM){
-      for (i=0;i<sn;i++)
-        for(j=0;j<sm;j++)
-          _field[x+j+(i+y)*fm]=shape[i*sm+j];
+  if (result==FIELD_BOTTOM){
+      for (i=0;i<st.sn;i++)
+        for(j=0;j<st.sm;j++)
+          _field[st.x+j+(i+st.y)*fm]+=st.shape[i*st.sm+j];
   }
 
 
   return result;
 }
 //Rotates the shape
-//TODO- delete unused memory 
+//TODO- delete unused memory
 void Shape::Rotate(){
   int i,j,tmp;
   int *matrix=new int [shapesize];
@@ -127,10 +195,10 @@ void Shape::Rotate(){
   shape_n=shape_m;
   shape_m=tmp;
 
-  ShowShapePointer();
+  //ShowShapePointer();
 }
 //Generates new shape, deletes an old one
-//TODO- delete unused memory 
+//TODO- delete unused memory
 void Shape::Generate(int shapename){
   int i;
   if (!shapepointer)
@@ -164,7 +232,7 @@ void Shape::Generate(int shapename){
 
       int i;
       shapepointer=0;
-      
+
       /*
       Angle
       { 0,1,
@@ -175,7 +243,7 @@ void Shape::Generate(int shapename){
       angle=new int[anglesize];
       angle[1]=angle[2]=angle[3]=1;
       angle[0]=0;
-      
+
 
       /*
       Stick
@@ -193,6 +261,8 @@ void Shape::Generate(int shapename){
 //Creates game field
 void Field::Init(int n,int m){
   int i,j;
+  _n=n;_m=m;
+  showme=new int [_n*_m];
   fn=n+1;fm=m+6;
   _field=new int [fn*fm];
 
@@ -214,6 +284,14 @@ void Field::Show(int look){
         cout<<_field[i*fm+j]<<"|";
         }
 
+      cout<<endl;
+    }
+  }
+  if (look==SHOWME_AS_TEXT){
+    for(i=0;i<_n;i++){
+      for(j=0;j<_m;j++){
+        cout<<showme[i*_m+j]<<"|";
+        }
       cout<<endl;
     }
   }
